@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Innovien World Cup — Standings</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&display=swap');
+:root{--green:#B0DD66;--gray:#747777;--bg:#121311;--card:#1c1e1a;--line:#2c2f28;--ink:#14210a;--rec-bg:#f4f5f0;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#fff;font-family:'Barlow Condensed',system-ui,sans-serif;padding:28px 34px 40px;border-top:5px solid var(--green)}
+.top{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:6px}
+h1{font-family:'Anton',sans-serif;font-size:40px;letter-spacing:1px;text-transform:uppercase;line-height:1}
+h1 .g{color:var(--green)}
+.sub{color:var(--gray);text-transform:uppercase;letter-spacing:2px;font-weight:600;font-size:13px;margin:4px 0 22px}
+.chip{display:inline-block;background:#0e0f0d;border:1px solid var(--line);border-radius:8px;padding:6px 12px;color:var(--green);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:1200px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 18px;display:flex;flex-direction:column}
+.chead{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.code{color:var(--gray);font-weight:700;font-size:15px;letter-spacing:1px}
+.cname{font-family:'Anton',sans-serif;font-size:23px;text-transform:uppercase;letter-spacing:.5px;flex:1}
+.total{background:#0e0f0d;border:1px solid var(--green);color:var(--green);border-radius:999px;min-width:62px;height:34px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;padding:0 10px}
+.rank{font-family:'Anton',sans-serif;font-size:13px;color:var(--ink);background:var(--green);border-radius:6px;padding:2px 7px;letter-spacing:1px}
+.row{display:flex;align-items:center;gap:8px;border-radius:9px;padding:9px 12px;margin-bottom:8px}
+.row.am{background:var(--green);color:var(--ink)}
+.row.rec{background:var(--rec-bg);color:#1a1a1a}
+.nm{flex:1;font-weight:600;font-size:16px;letter-spacing:.3px}
+.pts{font-family:'Anton',sans-serif;font-size:16px;min-width:54px;text-align:right}
+.badge{font-size:11px;font-weight:700;letter-spacing:1px;border-radius:5px;padding:2px 7px}
+.row.am .badge{background:rgba(0,0,0,.22)}
+.row.rec .badge{background:#dfe2d6;color:#5b5e54}
+.foot{color:var(--gray);font-size:12.5px;letter-spacing:.4px;margin-top:20px;line-height:1.5}
+.foot b{color:#cfd3c7}
+</style></head><body>
+<div class="top"><h1>THE <span class="g">GROUP STAGE</span> STANDINGS</h1>
+<span class="chip">&#9917; Innovien World Cup</span></div>
+<div class="sub">Jun 2 &ndash; Jul 10, 2026 &middot; updated from the contest data file</div>
+<div class="grid" id="grid"></div>
+<div class="foot" id="foot"></div>
+<script>
+const groups=[{"code": "BR", "name": "Brazil", "members": [["Mollie Ferguson", "AM", 975], ["Kollin Korell", "AM", 0], ["Dan Bostock", "REC", 560], ["Mike Murphy", "REC", 590]]}, {"code": "AR", "name": "Argentina", "members": [["Riley Laverty", "AM", 0], ["Rachel Huffman", "AM", 0], ["Adam Williams", "REC", 660], ["Merrimon McCartney", "REC", 640]]}, {"code": "FR", "name": "France", "members": [["Jon Pack", "AM", 0], ["Mike Minnillo", "AM", 0], ["Ben Dorsey", "REC", 685]]}, {"code": "DE", "name": "Germany", "members": [["Stephen Denzel", "AM", 200], ["Hannah Craig", "AM", 225], ["Monika DuVarney", "REC", 600], ["Jamie Houvig", "REC", 800]]}, {"code": "ES", "name": "Spain", "members": [["Brie Branting", "AM", 200], ["Jesu Philip", "AM", 0], ["Brennan Lantz", "REC", 785], ["Brandon Dowdell", "REC", 330]]}, {"code": "PT", "name": "Portugal", "members": [["Daniela Blesich", "AM", 75], ["Julia McDonald", "REC", 505], ["Ryan Mickley", "REC", 635]]}, {"code": "NL", "name": "Netherlands", "members": [["Kelsie Laughlin", "AM", 0], ["Luke Reineke", "REC", 675], ["Jordan Foote", "REC", 670]]}, {"code": "IT", "name": "Italy", "members": [["Jessica Evans", "AM", 25], ["Chelsea Navarro", "REC", 355], ["Gloria Manley", "REC", 845]]}];
+groups.forEach(g=>g.total=g.members.reduce((s,m)=>s+m[2],0));
+groups.sort((a,b)=>b.total-a.total);
+const grid=document.getElementById('grid');
+groups.forEach((g,i)=>{
+  const ms=[...g.members].sort((a,b)=>b[2]-a[2]);
+  grid.insertAdjacentHTML('beforeend',`<div class="card"><div class="chead">
+    <span class="rank">#${i+1}</span><span class="code">${g.code}</span>
+    <span class="cname">${g.name}</span><span class="total">${g.total.toLocaleString()}</span></div>
+    ${ms.map(m=>`<div class="row ${m[1].toLowerCase()}"><span class="nm">${m[0]}</span>
+      <span class="pts">${m[2].toLocaleString()}</span><span class="badge">${m[1]}</span></div>`).join('')}
+    </div>`);
+});
+document.getElementById('foot').innerHTML=
+ `<b>Scoring:</b> AM = Meetings&times;25 + Starts&times;75. REC = Screens&times;10 + Subs&times;25 + Starts&times;75, `+
+ `plus manual items (DUB CLUB, reference calls, Account Breaker, Pre-Stack, meetings-set). Green = AM, white = Recruiter; circle = group total.`;
+</script></body></html>
