@@ -29,16 +29,33 @@ workbook, run one script, push `index.html`.
 ### Updating each week (same as DLT)
 Open `index.html` in the GitHub web UI → pencil/Edit → paste the new content → Commit to `main`. Vercel auto-deploys.
 
+## Layout — Group Stage
+
+The page renders the contest as a **group stage**: players are drafted onto eight
+country teams and shown as cards, ranked by group total. AM rows are green, REC rows
+are white, and the circle on each card is the group total.
+
+There is **no team/country column in the Power BI workbook**, so the draft lives in the
+`ROSTER` block at the top of `refresh.py`. Edit that block when the roster changes —
+each line maps a player to a country and a fallback role (used only for players who
+have no activity rows yet, e.g. a new draftee). Players not listed in `ROSTER` are not
+shown; players listed but absent from the data render at 0.
+
 ## Scoring (as implemented in refresh.py)
 
 | Activity | Points | Source sheet |
 |---|---|---|
-| Meeting (set + gone off) | 35 (10 + 25) | Contact Activity (`Went Off = Y`) |
+| Meeting (held) | 25 | Contact Activity (`Went Off = Y`) |
 | Candidate screen | 10 | Recruiter Activity (weekly) |
 | Sub (to client) | 25 | Recruiter Activity (weekly) |
 | Start | 75 (both AM & recruiter) | ESF Details |
 | Power Weeks (Jun 29–Jul 3, Jul 6–Jul 10) | 2x | applied by date |
 
-**Still manual / flagged (not in the export):** DUB CLUB (75), reference calls (150), Pre-Stack bonuses (+25), and **Account Breaker** start upgrades (75 → 300) — the page lists the eligible Top-20/Federal starts but does not upgrade them until leadership confirms the official target-account list. To bake Account Breaker in, edit the start-scoring block in `refresh.py`.
+So: **AM = Meetings×25 + Starts×75**, **REC = Screens×10 + Subs×25 + Starts×75**.
 
-Meetings are scored at 35 (set + gone off). To switch to held-only (25), change `PTS_MEETING_SET = 0` at the top of `refresh.py`.
+**Still manual / flagged (not in the export):** DUB CLUB (75), reference calls (150),
+Pre-Stack bonuses (+25), and **Account Breaker** start upgrades (75 → 300). These are
+not baked into the group totals.
+
+Meetings are scored held-only at 25. To switch back to set+held (35), set
+`PTS_MEETING_SET = 10` at the top of `refresh.py`.
