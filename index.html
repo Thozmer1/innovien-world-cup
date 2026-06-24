@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Innovien World Cup — Standings</title>
+<style>
+  :root{
+    --green:#B0DD66; --green-dk:#8fbf3f; --gray:#747777; --gray-lt:#eef0ef;
+    --ink:#2b2e2b; --alert:#E74C3C; --card:#ffffff; --line:#e4e7e3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#f6f8f4;color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45}
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 60px}
+  header.top{border-left:6px solid var(--green);padding:6px 0 6px 16px;margin-bottom:6px}
+  h1{margin:0;font-size:26px;letter-spacing:-.01em}
+  .sub{color:var(--gray);font-size:14px;margin-top:4px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 22px}
+  .chip{background:var(--gray-lt);color:var(--gray);font-size:12px;font-weight:600;
+    padding:5px 11px;border-radius:999px}
+  .chip.live{background:var(--green);color:#2b3b13}
+  .leader{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:16px 20px;margin-bottom:22px;border-left:6px solid var(--green)}
+  .leader .crown{font-size:30px}
+  .leader .lbl{color:var(--gray);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+  .leader .nm{font-size:20px;font-weight:700}
+  .leader .pts{margin-left:auto;text-align:right}
+  .leader .pts b{font-size:30px;color:var(--green-dk)}
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;overflow:hidden}
+  th,td{padding:9px 12px;text-align:right;font-size:14px;border-bottom:1px solid var(--line)}
+  th{background:#fbfcfa;color:var(--gray);font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+  th.l,td.l{text-align:left}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(-n+3) td{background:#fbfdf6}
+  td.rank{color:var(--gray);font-weight:700;width:34px}
+  td.nm{font-weight:600}
+  td.cum b{font-size:15px}
+  .badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;letter-spacing:.04em}
+  .badge.AM{background:#e7f3d2;color:#5d7a26}
+  .badge.REC{background:var(--gray-lt);color:var(--gray)}
+  .day-pos{color:var(--green-dk);font-weight:700}
+  .day-zero{color:#c2c6bf}
+  .muted{color:#c2c6bf}
+  section.block{margin-top:26px}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);margin:0 0 10px}
+  .movers{display:flex;flex-wrap:wrap;gap:8px}
+  .mover{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:13px}
+  .mover b{color:var(--green-dk)}
+  .alert{background:#fff;border:1px solid #f3cfca;border-left:6px solid var(--alert);border-radius:12px;padding:14px 18px}
+  .alert .hd{color:var(--alert);font-weight:700;font-size:14px;margin-bottom:4px}
+  .alert p{margin:6px 0;font-size:13.5px}
+  .manual{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 18px}
+  .manual div{padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .manual div:last-child{border-bottom:none}
+  .manual span.pt{color:var(--gray);font-weight:700}
+  footer{margin-top:30px;color:var(--gray);font-size:12px;border-top:1px solid var(--line);padding-top:16px}
+  footer b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Innovien World Cup — Standings</h1>
+    <div class="sub" id="sub"></div>
+  </header>
+  <div class="chips" id="chips"></div>
+
+  <div class="leader" id="leader"></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="l">#</th><th class="l">Name</th><th class="l">Role</th>
+        <th>Mtgs</th><th>Scr</th><th>Sub</th><th>Start</th>
+        <th id="dayhdr">Latest day</th><th>Cumulative</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <section class="block"><h2>Movers (latest activity)</h2><div class="movers" id="movers"></div></section>
+  <section class="block"><h2>⚠ Account Breaker — needs leadership confirmation</h2><div class="alert" id="breaker"></div></section>
+  <section class="block"><h2>⚠ Manual entry still needed</h2><div class="manual" id="manual"></div></section>
+
+  <footer id="footer"></footer>
+</div>
+
+<script id="standings-data" type="application/json">
+/*DATA_START*/
+{"contest_window": "June 2 – July 10, 2026", "window_end": "Jun 23", "refreshed": "Jun 24, 2026", "power_week": "1x — Power Weeks not started", "day_label": "Pts 6/23", "leader": {"name": "Mollie Ferguson", "role": "AM", "cum": 2920}, "rows": [{"rank": 1, "name": "Mollie Ferguson", "role": "AM", "mtg": 62, "scr": 0, "sub": 0, "start": 10, "day": 35, "cum": 2920}, {"rank": 2, "name": "Hannah Craig", "role": "AM", "mtg": 53, "scr": 0, "sub": 0, "start": 2, "day": 0, "cum": 2005}, {"rank": 3, "name": "Kollin Korell", "role": "AM", "mtg": 53, "scr": 0, "sub": 0, "start": 0, "day": 0, "cum": 1855}, {"rank": 4, "name": "Riley Laverty", "role": "AM", "mtg": 40, "scr": 0, "sub": 0, "start": 0, "day": 0, "cum": 1400}, {"rank": 5, "name": "Brie Branting", "role": "AM", "mtg": 23, "scr": 0, "sub": 0, "start": 6, "day": 0, "cum": 1255}, {"rank": 6, "name": "Gloria Manley", "role": "REC", "mtg": 0, "scr": 48, "sub": 19, "start": 4, "day": 0, "cum": 1255}, {"rank": 7, "name": "Kelsie Laughlin", "role": "AM", "mtg": 34, "scr": 0, "sub": 0, "start": 0, "day": 0, "cum": 1190}, {"rank": 8, "name": "Mike Minnillo", "role": "AM", "mtg": 21, "scr": 0, "sub": 0, "start": 5, "day": 0, "cum": 1110}, {"rank": 9, "name": "Jamie Houvig", "role": "REC", "mtg": 0, "scr": 49, "sub": 18, "start": 2, "day": 0, "cum": 1090}, {"rank": 10, "name": "Ben Dorsey", "role": "REC", "mtg": 0, "scr": 45, "sub": 16, "start": 3, "day": 0, "cum": 1075}, {"rank": 11, "name": "Jon Pack", "role": "AM", "mtg": 22, "scr": 0, "sub": 0, "start": 4, "day": 0, "cum": 1070}, {"rank": 12, "name": "Brennan Lantz", "role": "REC", "mtg": 0, "scr": 60, "sub": 13, "start": 1, "day": 0, "cum": 1000}, {"rank": 13, "name": "Mike Murphy", "role": "REC", "mtg": 0, "scr": 42, "sub": 10, "start": 4, "day": 0, "cum": 970}, {"rank": 14, "name": "Adam Williams", "role": "REC", "mtg": 0, "scr": 46, "sub": 14, "start": 2, "day": 0, "cum": 960}, {"rank": 15, "name": "Luke Reineke", "role": "REC", "mtg": 0, "scr": 48, "sub": 13, "start": 2, "day": 0, "cum": 955}, {"rank": 16, "name": "Brandon Dowdell", "role": "REC", "mtg": 0, "scr": 34, "sub": 14, "start": 3, "day": 0, "cum": 915}, {"rank": 17, "name": "Merrimon McCartney", "role": "REC", "mtg": 0, "scr": 44, "sub": 14, "start": 1, "day": 0, "cum": 865}, {"rank": 18, "name": "Julia McDonald", "role": "REC", "mtg": 0, "scr": 35, "sub": 11, "start": 3, "day": 0, "cum": 850}, {"rank": 19, "name": "Monika DuVarney", "role": "REC", "mtg": 0, "scr": 41, "sub": 14, "start": 1, "day": 0, "cum": 835}, {"rank": 20, "name": "Stephen Denzel", "role": "AM", "mtg": 19, "scr": 0, "sub": 0, "start": 2, "day": 35, "cum": 815}, {"rank": 21, "name": "Jordan Foote", "role": "REC", "mtg": 0, "scr": 33, "sub": 15, "start": 1, "day": 0, "cum": 780}, {"rank": 22, "name": "Ryan Mickley", "role": "REC", "mtg": 0, "scr": 50, "sub": 11, "start": 0, "day": 0, "cum": 775}, {"rank": 23, "name": "Jessica Evans", "role": "AM", "mtg": 22, "scr": 0, "sub": 0, "start": 0, "day": 0, "cum": 770}, {"rank": 24, "name": "Chelsea Navarro", "role": "REC", "mtg": 0, "scr": 17, "sub": 9, "start": 4, "day": 0, "cum": 695}, {"rank": 25, "name": "Dan Bostock", "role": "REC", "mtg": 0, "scr": 36, "sub": 13, "start": 0, "day": 0, "cum": 685}, {"rank": 26, "name": "Daniela Blesich", "role": "AM", "mtg": 2, "scr": 0, "sub": 0, "start": 1, "day": 0, "cum": 145}, {"rank": 27, "name": "Jesu Philip", "role": "AM", "mtg": 4, "scr": 0, "sub": 0, "start": 0, "day": 0, "cum": 140}, {"rank": 28, "name": "Johnna Fusco", "role": "AM", "mtg": 0, "scr": 0, "sub": 0, "start": 1, "day": 0, "cum": 75}], "movers": [{"name": "Brennan Lantz", "pts": 155}, {"name": "Jamie Houvig", "pts": 135}, {"name": "Mike Murphy", "pts": 135}, {"name": "Merrimon McCartney", "pts": 120}, {"name": "Gloria Manley", "pts": 110}, {"name": "Julia McDonald", "pts": 110}, {"name": "Monika DuVarney", "pts": 105}, {"name": "Adam Williams", "pts": 100}], "breaker": {"headline": "21 of 31 in-window starts are at Top-20 / Top-Federal accounts (Collins Aerospace, Jefferson Health, Leidos, OTIS, Pratt & Whitney). If confirmed as Account Breakers, each jumps 75 → 300 pts (+225 each). Scored at the base 75 for now, pending the official list.", "detail": "AMs: Mollie Ferguson 10, Mike Minnillo 4, Jon Pack 4, Hannah Craig 2, Stephen Denzel 1. RECs: Chelsea Navarro 4, Mike Murphy 4, Gloria Manley 3, Julia McDonald 3, Luke Reineke 2, Jamie Houvig 2, Jordan Foote 1, Brennan Lantz 1, Merrimon McCartney 1."}, "manual": [{"item": "DUB CLUB (200+ BD outreaches/day)", "pts": "75", "why": "Recruiter Activity calls are weekly totals, not per-day"}, {"item": "Reference calls", "pts": "150", "why": "No clean per-event count in the export"}, {"item": "Pre-Stack bonuses", "pts": "+25 each", "why": "Requires meeting/interview booking dates"}], "footer": "<b>Scoring:</b> meetings 35 (10 set + 25 gone off), screens 10, subs 25, starts 75 (credited to both AM &amp; recruiter); 2x in Power Weeks. <b>Source:</b> Comtrak Power BI export — Contact Activity (meetings), Recruiter Activity (screens/subs, weekly), ESF Details (starts). Snapshot, not live: regenerate with refresh.py. Total starts in window: 31."}
+/*DATA_END*/
+</script>
+
+<script>
+  const D = JSON.parse(document.getElementById('standings-data').textContent.replace('/*DATA_START*/','').replace('/*DATA_END*/',''));
+  const $ = id => document.getElementById(id);
+  $('sub').textContent = D.contest_window + ' · "six weeks, one trophy"';
+  $('chips').innerHTML =
+    `<span class="chip live">Through ${D.window_end}</span>`+
+    `<span class="chip">Refreshed ${D.refreshed}</span>`+
+    `<span class="chip">${D.power_week}</span>`+
+    `<span class="chip">Auto-tracked points only</span>`;
+  $('dayhdr').textContent = D.day_label;
+  $('leader').innerHTML =
+    `<div class="crown">🏆</div><div><div class="lbl">Current leader</div>`+
+    `<div class="nm">${D.leader.name} <span class="badge ${D.leader.role}">${D.leader.role}</span></div></div>`+
+    `<div class="pts"><div class="lbl">Cumulative</div><b>${D.leader.cum.toLocaleString()}</b></div>`;
+  const dash = v => v ? v : '<span class="muted">–</span>';
+  $('rows').innerHTML = D.rows.map(r=>{
+    const day = r.day>0 ? `<span class="day-pos">+${r.day}</span>` : `<span class="day-zero">0</span>`;
+    return `<tr><td class="rank l">${r.rank}</td><td class="nm l">${r.name}</td>`+
+      `<td class="l"><span class="badge ${r.role}">${r.role}</span></td>`+
+      `<td>${dash(r.mtg)}</td><td>${dash(r.scr)}</td><td>${dash(r.sub)}</td><td>${dash(r.start)}</td>`+
+      `<td>${day}</td><td class="cum"><b>${r.cum.toLocaleString()}</b></td></tr>`;
+  }).join('');
+  $('movers').innerHTML = D.movers.map(m=>`<div class="mover">${m.name} <b>+${m.pts}</b></div>`).join('') || '<span class="muted">No new activity.</span>';
+  $('breaker').innerHTML = `<div class="hd">Big potential swing</div><p>${D.breaker.headline}</p>`+(D.breaker.detail?`<p>${D.breaker.detail}</p>`:'');
+  $('manual').innerHTML = D.manual.map(m=>`<div>${m.item} <span class="pt">${m.pts}</span><br><span class="muted">${m.why}</span></div>`).join('');
+  $('footer').innerHTML = D.footer;
+</script>
+</body>
+</html>
